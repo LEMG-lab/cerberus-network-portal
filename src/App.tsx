@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import Status from './pages/Status';
 import Validators from './pages/Validators';
@@ -6,7 +6,7 @@ import Stream from './pages/Stream';
 import Demo from './pages/Demo';
 import Hypercube from './pages/Hypercube';
 
-function Navigation() {
+function Navigation({ toggleTheme, theme }: { toggleTheme: () => void, theme: string }) {
   const location = useLocation();
   const links = [
     { path: '/status', label: 'Status' },
@@ -17,7 +17,7 @@ function Navigation() {
   ];
 
   return (
-    <nav className="flex gap-6 mt-6 md:mt-0">
+    <nav className="flex items-center gap-6 mt-6 md:mt-0">
       {links.map(l => (
         <Link 
           key={l.path} 
@@ -27,17 +27,28 @@ function Navigation() {
           {l.label}
         </Link>
       ))}
+      <button onClick={toggleTheme} className="ml-4 px-3 py-1 text-xs uppercase tracking-wider text-[var(--text)] border border-[var(--border)] rounded hover:bg-[var(--card)] transition-colors">
+        {theme === "light" ? "Dark" : "Light"}
+      </button>
     </nav>
   );
 }
 
 export default function App() {
+  const [theme, setTheme] = useState("light");
+
   useEffect(() => {
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    if (prefersDark) {
-      document.documentElement.classList.add("dark");
-    }
+    const saved = localStorage.getItem("theme") || "light";
+    setTheme(saved);
+    document.documentElement.classList.toggle("dark", saved === "dark");
   }, []);
+
+  const toggleTheme = () => {
+    const next = theme === "light" ? "dark" : "light";
+    setTheme(next);
+    localStorage.setItem("theme", next);
+    document.documentElement.classList.toggle("dark", next === "dark");
+  };
 
   return (
     <Router>
@@ -53,7 +64,7 @@ export default function App() {
                 <p className="text-[10px] text-gray-500 tracking-widest uppercase mt-1">Compliance Computation Infrastructure</p>
               </Link>
             </div>
-            <Navigation />
+            <Navigation toggleTheme={toggleTheme} theme={theme} />
           </div>
         </header>
 
