@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
 import { ActivitySquare, Database, Key } from 'lucide-react';
+import { ethers } from 'ethers';
+
+const RPC_URL = "https://api.cerberus.computer/rpc";
 
 interface EvidenceEvent {
   id: string;
@@ -11,23 +14,53 @@ interface EvidenceEvent {
 
 export default function Stream() {
   const [events, setEvents] = useState<EvidenceEvent[]>([]);
+  const [errorStatus, setErrorStatus] = useState<string | null>(null);
 
   useEffect(() => {
-    const suppliers = ['RFC 10293', 'CEN/TC 434', 'ISO 27001', 'SOC 2 TYPE II'];
-    const chains = ['Cerberus / Global Force / Base', 'Cerberus / Global Force', 'Cerberus Only'];
-    
-    const interval = setInterval(() => {
-      const newEvent: EvidenceEvent = {
-        id: Math.random().toString(36).substring(2, 9),
-        hash: '0x' + Math.random().toString(16).substring(2, 40).padEnd(64, '0'),
-        supplier: suppliers[Math.floor(Math.random() * suppliers.length)],
-        chains_written: chains[Math.floor(Math.random() * chains.length)],
-        timestamp: new Date().toLocaleTimeString()
-      };
-      
-      setEvents(prev => [newEvent, ...prev].slice(0, 15));
-    }, 3000);
-    return () => clearInterval(interval);
+    const provider = new ethers.JsonRpcProvider(RPC_URL);
+    let isMounted = true;
+    let lastProcessedBlock = 0;
+
+    const fetchTransactions = async () => {
+      try {
+        const blockNumber = await provider.getBlockNumber();
+        if (!isMounted) return;
+        
+        if (lastProcessedBlock === blockNumber) return;
+        lastProcessedBlock = blockNumber;
+
+        const block = await provider.getBlock(blockNumber, true);
+        if (!block || !isMounted) return;
+
+        setErrorStatus(null);
+
+        if (block.prefetchedTransactions && block.prefetchedTransactions.length > 0) {
+          const newEvents = block.prefetchedTransactions.map(tx => ({
+            id: tx.hash,
+            hash: tx.hash,
+            supplier: tx.to ? `Target: ${tx.to.substring(0, 8)}...` : 'System Operation',
+            chains_written: 'Cerberus Ledger',
+            timestamp: new Date(block.timestamp * 1000).toLocaleTimeString()
+          }));
+
+          setEvents(prev => {
+            const combined = [...newEvents, ...prev];
+            const unique = combined.filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i);
+            return unique.slice(0, 15);
+          });
+        }
+      } catch (error) {
+        console.error("RPC Error:", error);
+        if (isMounted) setErrorStatus("No live evidence records available");
+      }
+    };
+
+    fetchTransactions();
+    const interval = setInterval(fetchTransactions, 5000);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
   }, []);
 
   return (
@@ -46,16 +79,18 @@ export default function Stream() {
         </div>
         
         <div className="divide-y divide-gray-800/50">
-          {events.length === 0 ? (
-            <div className="p-8 text-center text-[var(--muted)] animate-pulse">Awaiting network events...</div>
+          {errorStatus ? (
+            <div className="p-8 text-center text-[var(--accent)]">{errorStatus}</div>
+          ) : events.length === 0 ? (
+            <div className="p-8 text-center text-[var(--muted)] animate-pulse">Awaiting live network events...</div>
           ) : (
             events.map((ev, i) => (
-              <div key={ev.id} className={`grid grid-cols-12 gap-4 p-4 items-center text-sm transition-all duration-300 ${i === 0 ? 'bg-[var(--color-cerb-blue)]/10 border-l-2 border-l-[var(--accent)]' : 'hover:bg-gray-800/30'}`}>
+              <div key={ev.id} className={`grid grid-cols-12 gap-4 p-4 items-center text-sm transition-all duration-300 ${i === 0 ? 'bg-[var(--accent)]/10 border-l-2 border-l-[var(--accent)]' : 'hover:bg-[var(--card)]'}`}>
                 <div className="col-span-2 font-mono text-[var(--muted)]">{ev.timestamp}</div>
                 <div className="col-span-4 font-mono text-[var(--accent)] truncate pr-4 flex items-center gap-2">
                   <Key size={14} className="opacity-50" /> {ev.hash.substring(0, 16)}...
                 </div>
-                <div className="col-span-3 text-gray-300">{ev.supplier}</div>
+                <div className="col-span-3 text-[var(--text)]">{ev.supplier}</div>
                 <div className="col-span-3 text-xs flex items-center gap-2">
                   <Database size={12} className="text-emerald-400" /> {ev.chains_written}
                 </div>
