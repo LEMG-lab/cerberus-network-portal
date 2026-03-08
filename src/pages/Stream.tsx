@@ -67,11 +67,11 @@ export default function Stream() {
     <div className="space-y-6 animate-in fade-in duration-500 max-w-5xl mx-auto">
       <div className="flex items-center gap-3 mb-8">
         <ActivitySquare className="text-[var(--accent)]" size={32} />
-        <h1 className="text-3xl font-light tracking-wider">Live Evidence Stream</h1>
+        <h1 className="text-3xl font-extrabold tracking-wider">Live Evidence Stream</h1>
       </div>
 
-      <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg overflow-hidden">
-        <div className="grid grid-cols-12 gap-4 p-4 border-b border-[var(--border)] text-xs tracking-widest text-[var(--muted)] uppercase bg-gray-900/50">
+      <div className="bg-[var(--card)] backdrop-blur-[8px] border border-[var(--border)] rounded-[14px] overflow-hidden">
+        <div className="grid grid-cols-12 gap-4 p-4 border-b border-[var(--border)] text-xs tracking-widest text-[var(--text-secondary)] uppercase bg-gray-100">
           <div className="col-span-2">Time</div>
           <div className="col-span-4">Evidence Hash</div>
           <div className="col-span-3">Supplier</div>
@@ -82,15 +82,15 @@ export default function Stream() {
           {errorStatus ? (
             <div className="p-8 text-center text-[var(--accent)]">{errorStatus}</div>
           ) : events.length === 0 ? (
-            <div className="p-8 text-center text-[var(--muted)] animate-pulse">Awaiting live network events...</div>
+            <div className="p-8 text-center text-[var(--text-secondary)] animate-pulse">Awaiting live network events...</div>
           ) : (
             events.map((ev, i) => (
-              <div key={ev.id} className={`grid grid-cols-12 gap-4 p-4 items-center text-sm transition-all duration-300 ${i === 0 ? 'bg-[var(--accent)]/10 border-l-2 border-l-[var(--accent)]' : 'hover:bg-[var(--card)]'}`}>
-                <div className="col-span-2 font-mono text-[var(--muted)]">{ev.timestamp}</div>
+              <div key={ev.id} className={`grid grid-cols-12 gap-4 p-4 items-center text-sm transition-all duration-300 ${i === 0 ? 'bg-[var(--accent)]/10 border-l-2 border-l-[var(--accent)]' : 'hover:bg-[var(--card)] backdrop-blur-[8px]'}`}>
+                <div className="col-span-2 font-mono text-[var(--text-secondary)]">{ev.timestamp}</div>
                 <div className="col-span-4 font-mono text-[var(--accent)] truncate pr-4 flex items-center gap-2">
                   <Key size={14} className="opacity-50" /> {ev.hash.substring(0, 16)}...
                 </div>
-                <div className="col-span-3 text-[var(--text)]">{ev.supplier}</div>
+                <div className="col-span-3 text-[var(--text-primary)]">{ev.supplier}</div>
                 <div className="col-span-3 text-xs flex items-center gap-2">
                   <Database size={12} className="text-emerald-400" /> {ev.chains_written}
                 </div>

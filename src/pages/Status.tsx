@@ -100,7 +100,7 @@ export default function Status() {
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex items-center gap-3 mb-8">
         <Activity className="text-[var(--accent)]" size={32} />
-        <h1 className="text-3xl font-light tracking-wider">Network Status</h1>
+        <h1 className="text-3xl font-extrabold tracking-wider">Network Status</h1>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -113,48 +113,48 @@ export default function Status() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
         
         {/* Live Chain Activity Panel */}
-        <div className="lg:col-span-1 bg-[var(--card)] border border-[var(--border)] p-6 rounded-lg flex flex-col">
+        <div className="lg:col-span-1 bg-[var(--card)] backdrop-blur-[8px] border border-[var(--border)] p-6 rounded-[14px] flex flex-col">
           <div className="flex items-center gap-2 mb-6">
             <Box className="text-[var(--accent)]" size={20} />
-            <h2 className="text-lg font-light">Live Chain Activity</h2>
+            <h2 className="text-lg font-extrabold">Live Chain Activity</h2>
           </div>
           
           <div className="space-y-4 flex-1">
              <div className="flex justify-between items-center py-2 border-b border-[var(--border)]">
-               <span className="text-sm text-[var(--muted)]">Latest Block</span>
+               <span className="text-sm text-[var(--text-secondary)]">Latest Block</span>
                <span className="font-mono text-emerald-400">{metrics.blockHeight || '---'}</span>
              </div>
              <div className="flex justify-between items-center py-2 border-b border-[var(--border)]">
-               <span className="text-sm text-[var(--muted)]">Tx in Last Block</span>
-               <span className="font-mono text-[var(--text)]">{recentBlocks.length > 0 ? recentBlocks[0].txCount : '---'}</span>
+               <span className="text-sm text-[var(--text-secondary)]">Tx in Last Block</span>
+               <span className="font-mono text-[var(--text-primary)]">{recentBlocks.length > 0 ? recentBlocks[0].txCount : '---'}</span>
              </div>
              <div className="flex justify-between items-center py-2 border-b border-[var(--border)]">
-               <span className="text-sm text-[var(--muted)]">Avg Block Time</span>
-               <span className="font-mono text-[var(--text)]">{metrics.blockTime}</span>
+               <span className="text-sm text-[var(--text-secondary)]">Avg Block Time</span>
+               <span className="font-mono text-[var(--text-primary)]">{metrics.blockTime}</span>
              </div>
              <div className="flex justify-between items-center py-2 border-b border-[var(--border)]">
-               <span className="text-sm text-[var(--muted)]">RPC Health</span>
+               <span className="text-sm text-[var(--text-secondary)]">RPC Health</span>
                <span className="font-mono text-[var(--accent)]">{metrics.status === 'Healthy' ? '100% ONLINE' : 'DEGRADED'}</span>
              </div>
           </div>
 
           <div className="mt-6 pt-4 border-t border-[var(--border)]">
-             <p className="text-xs text-[var(--muted)] mb-2 uppercase tracking-widest">Recent Blocks</p>
+             <p className="text-xs text-[var(--text-secondary)] mb-2 uppercase tracking-widest">Recent Blocks</p>
              <div className="space-y-2">
                {recentBlocks.slice(0, 10).map(b => (
                  <div key={b.number} className="flex justify-between text-xs font-mono">
-                   <span className="text-gray-400">#{b.number}</span>
+                   <span className="text-[var(--text-secondary)]">#{b.number}</span>
                    <span className="text-[var(--accent)]">{b.txCount} TXs</span>
                  </div>
                ))}
-               {recentBlocks.length === 0 && <span className="text-xs text-[var(--muted)]">Waiting for blocks...</span>}
+               {recentBlocks.length === 0 && <span className="text-xs text-[var(--text-secondary)]">Waiting for blocks...</span>}
              </div>
           </div>
         </div>
 
         {/* RPC Latency History */}
-        <div className="lg:col-span-2 bg-[var(--card)] border border-[var(--border)] p-6 rounded-lg">
-          <h2 className="text-lg text-[var(--muted)] mb-4">RPC Latency History (ms)</h2>
+        <div className="lg:col-span-2 bg-[var(--card)] backdrop-blur-[8px] border border-[var(--border)] p-6 rounded-[14px]">
+          <h2 className="text-lg text-[var(--text-secondary)] mb-4">RPC Latency History (ms)</h2>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={latencyHistory}>
@@ -177,12 +177,12 @@ export default function Status() {
 
 function MetricCard({ title, value, icon }: { title: string, value: string, icon: React.ReactNode }) {
   return (
-    <div className="bg-[var(--card)] border border-[var(--border)] p-6 rounded-lg flex items-center justify-between">
+    <div className="bg-[var(--card)] backdrop-blur-[8px] border border-[var(--border)] p-6 rounded-[14px] flex items-center justify-between">
       <div>
-        <p className="text-sm text-[var(--muted)] uppercase tracking-widest mb-1">{title}</p>
+        <p className="text-sm text-[var(--text-secondary)] uppercase tracking-widest mb-1">{title}</p>
         <p className="text-2xl font-semibold">{value}</p>
       </div>
-      <div className="p-3 bg-gray-900/10 dark:bg-gray-900/50 rounded-full">{icon}</div>
+      <div className="p-3 bg-gray-100  rounded-full">{icon}</div>
     </div>
   );
 }
