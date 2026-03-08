@@ -1,4 +1,5 @@
-import { Routes, Route, NavLink, Navigate } from 'react-router-dom'
+import { Routes, Route, NavLink } from 'react-router-dom'
+import Home from './pages/Home'
 import Status from './pages/Status'
 import ExplorerLink from './pages/ExplorerLink'
 import ApiLink from './pages/ApiLink'
@@ -7,10 +8,11 @@ export default function App() {
   return (
     <div className="app-shell">
       <header>
-        <div className="logo">
+        <NavLink to="/" className="logo">
           Cerberus <span>Network</span>
-        </div>
+        </NavLink>
         <nav>
+          <NavLink to="/" end className={({ isActive }) => isActive ? 'active' : ''}>Home</NavLink>
           <NavLink to="/status" className={({ isActive }) => isActive ? 'active' : ''}>Status</NavLink>
           <NavLink to="/explorer-link" className={({ isActive }) => isActive ? 'active' : ''}>Explorer</NavLink>
           <NavLink to="/api-link" className={({ isActive }) => isActive ? 'active' : ''}>API</NavLink>
@@ -19,7 +21,7 @@ export default function App() {
 
       <main>
         <Routes>
-          <Route path="/" element={<Navigate to="/status" replace />} />
+          <Route path="/" element={<Home />} />
           <Route path="/status" element={<Status />} />
           <Route path="/explorer-link" element={<ExplorerLink />} />
           <Route path="/api-link" element={<ApiLink />} />
