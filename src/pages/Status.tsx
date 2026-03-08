@@ -7,7 +7,7 @@ interface NetworkData {
   blockNumber: number
   txCount: number
   latencyMs: number
-  healthy: boolean
+  lastUpdated: string
 }
 
 export default function Status() {
@@ -29,11 +29,16 @@ export default function Status() {
       const block = await provider.getBlock(blockNumber)
       const txCount = block?.transactions?.length ?? 0
 
-      setData({ blockNumber, txCount, latencyMs, healthy: true })
+      setData({
+        blockNumber,
+        txCount,
+        latencyMs,
+        lastUpdated: new Date().toLocaleTimeString(),
+      })
       setError(false)
     } catch {
       setError(true)
-      setData(prev => prev ? { ...prev, healthy: false } : null)
+      setData(null)
     }
   }, [])
 
@@ -47,41 +52,56 @@ export default function Status() {
     <>
       <h1 className="page-title">Cerberus Network Status</h1>
 
-      {error && !data && (
+      {error && (
         <div className="card">
-          <h2>Connection</h2>
-          <p style={{ color: 'var(--accent)' }}>Unable to reach RPC endpoint</p>
+          <h2>RPC unavailable</h2>
+          <p style={{ color: 'var(--accent)' }}>
+            Unable to reach endpoint: {RPC_URL}
+          </p>
         </div>
       )}
 
-      <div className="status-grid">
-        <div className="card">
-          <h2>Latest Block</h2>
-          <div className="value">
-            <span className={error ? 'pulse error' : 'pulse'} />
-            {data ? data.blockNumber.toLocaleString() : '—'}
+      {!error && data && (
+        <div className="status-grid">
+          <div className="card">
+            <h2>Latest Block</h2>
+            <div className="value">
+              <span className="pulse" />
+              {data.blockNumber.toLocaleString()}
+            </div>
+          </div>
+
+          <div className="card">
+            <h2>TX in Block</h2>
+            <div className="value">{data.txCount}</div>
+          </div>
+
+          <div className="card">
+            <h2>RPC Latency</h2>
+            <div className={`value ${data.latencyMs > 500 ? 'accent' : ''}`}>
+              {data.latencyMs} ms
+            </div>
+          </div>
+
+          <div className="card">
+            <h2>Last Updated</h2>
+            <div className="value">{data.lastUpdated}</div>
+          </div>
+
+          <div className="card">
+            <h2>RPC Endpoint</h2>
+            <div className="value" style={{ fontSize: '0.85rem', wordBreak: 'break-all' }}>
+              {RPC_URL}
+            </div>
           </div>
         </div>
+      )}
 
+      {!error && !data && (
         <div className="card">
-          <h2>TX in Block</h2>
-          <div className="value">{data ? data.txCount : '—'}</div>
+          <h2>Loading…</h2>
         </div>
-
-        <div className="card">
-          <h2>RPC Latency</h2>
-          <div className={`value ${data && data.latencyMs > 500 ? 'accent' : ''}`}>
-            {data ? `${data.latencyMs} ms` : '—'}
-          </div>
-        </div>
-
-        <div className="card">
-          <h2>Health</h2>
-          <div className="value" style={{ color: data?.healthy ? '#22c55e' : 'var(--accent)' }}>
-            {data ? (data.healthy ? 'Operational' : 'Degraded') : '—'}
-          </div>
-        </div>
-      </div>
+      )}
     </>
   )
 }
