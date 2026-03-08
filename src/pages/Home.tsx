@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { JsonRpcProvider } from 'ethers'
 import { Link } from 'react-router-dom'
+import { CERBERUS_RPC } from '../config/network'
 
-const RPC_URL = 'https://api.cerberus.computer/rpc'
+const RPC_URL = CERBERUS_RPC
 
 interface LiveData {
   blockNumber: number

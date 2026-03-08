@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
+import { CERBERUS_RPC } from '../../config/network'
 
-const RPC_URL = 'https://api.cerberus.computer/rpc'
+const RPC_URL = CERBERUS_RPC
 
 interface BlockRow {
   number: number
