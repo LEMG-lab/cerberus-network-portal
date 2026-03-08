@@ -1,4 +1,8 @@
+import { useEffect, useState } from 'react';
 import { MapPin, Globe } from 'lucide-react';
+import { ethers } from 'ethers';
+
+const RPC_URL = "https://api.cerberus.computer/rpc";
 
 const validators = [
   { id: 'Node-0x1A', location: 'Helsinki, FIN', provider: 'AWS eu-north-1', status: 'Active', uptime: '99.99%', lat: 60.1695, lng: 24.9354 },
@@ -8,6 +12,31 @@ const validators = [
 ];
 
 export default function Validators() {
+  const [networkLatency, setNetworkLatency] = useState('Ping: ---');
+
+  useEffect(() => {
+    const provider = new ethers.JsonRpcProvider(RPC_URL);
+    let isMounted = true;
+    
+    const pingNetwork = async () => {
+      try {
+        const start = performance.now();
+        await provider.getBlockNumber();
+        const end = performance.now();
+        if (isMounted) setNetworkLatency(`Ping: ${Math.floor(end - start)}ms`);
+      } catch (e) {
+        if (isMounted) setNetworkLatency('Connection Error');
+      }
+    };
+    
+    pingNetwork();
+    const interval = setInterval(pingNetwork, 10000);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    }
+  }, []);
+
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex items-center gap-3 mb-8">
@@ -22,6 +51,7 @@ export default function Validators() {
           <div className="z-10 text-center space-y-4">
             <Globe size={120} className="mx-auto text-gray-700 animate-[spin_60s_linear_infinite]" />
             <p className="text-sm tracking-widest text-[var(--accent)]">GLOBAL FORCE DEPLOYMENT</p>
+            <p className="text-xs font-mono text-[var(--muted)] bg-[var(--card)] py-1 px-3 rounded-full border border-[var(--border)] inline-block mt-4">{networkLatency}</p>
           </div>
         </div>
 
