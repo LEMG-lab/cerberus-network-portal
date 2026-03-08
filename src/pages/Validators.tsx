@@ -4,14 +4,15 @@ import { ethers } from 'ethers';
 
 const RPC_URL = "https://api.cerberus.computer/rpc";
 
-const validators = [
-  { id: 'Node-0x1A', location: 'Helsinki, FIN', provider: 'AWS eu-north-1', status: 'Active', uptime: '99.99%', lat: 60.1695, lng: 24.9354 },
-  { id: 'Node-0x2B', location: 'Nuremberg, DEU', provider: 'Hetzner', status: 'Active', uptime: '99.95%', lat: 49.4521, lng: 11.0767 },
-  { id: 'Node-0x3C', location: 'New York, USA', provider: 'GCP us-east4', status: 'Active', uptime: '100.00%', lat: 40.7128, lng: -74.0060 },
-  { id: 'Node-0x4D', location: 'Singapore, SGP', provider: 'AWS ap-southeast-1', status: 'Active', uptime: '99.98%', lat: 1.3521, lng: 103.8198 },
-];
+interface Validator {
+  nodeID: string;
+  weight: string;
+  uptime: string;
+  connected: boolean;
+}
 
 export default function Validators() {
+  const [validators, setValidators] = useState<Validator[]>([]);
   const [networkLatency, setNetworkLatency] = useState('Ping: ---');
 
   useEffect(() => {
@@ -29,6 +30,20 @@ export default function Validators() {
       }
     };
     
+    const fetchValidators = async () => {
+      try {
+        const res = await fetch("https://api.avax.network/ext/bc/990305/platform");
+        if (!res.ok) return;
+        const data = await res.json();
+        if (isMounted && data.validators) {
+          setValidators(data.validators);
+        }
+      } catch (e) {
+        console.error("Failed to fetch validators:", e);
+      }
+    };
+
+    fetchValidators();
     pingNetwork();
     const interval = setInterval(pingNetwork, 10000);
     return () => {
@@ -55,25 +70,29 @@ export default function Validators() {
           </div>
         </div>
 
-        <div className="space-y-4">
-          <h2 className="text-xl font-light mb-4">Node Registry</h2>
-          {validators.map((v) => (
-            <div key={v.id} className="bg-[var(--card)] border border-[var(--border)] p-4 rounded-lg flex items-center justify-between hover:border-gray-600 transition-colors">
-              <div className="flex items-center gap-4">
-                <div className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]"></div>
-                <div>
-                  <p className="font-mono text-lg">{v.id}</p>
-                  <p className="text-xs text-[var(--muted)] flex items-center gap-1 mt-1">
-                    <MapPin size={12} /> {v.location} • {v.provider}
-                  </p>
+        <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+          <h2 className="text-xl font-light mb-4 sticky top-0 bg-[var(--bg)] z-10 py-2">Node Registry</h2>
+          {validators.length === 0 ? (
+             <div className="text-[var(--muted)] text-sm animate-pulse p-4">Syncing with Platform Chain...</div>
+          ) : (
+            validators.map((v) => (
+              <div key={v.nodeID} className="bg-[var(--card)] border border-[var(--border)] p-4 rounded-lg flex items-center justify-between hover:border-gray-600 transition-colors">
+                <div className="flex items-center gap-4">
+                  <div className={`w-2 h-2 rounded-full ${v.connected !== false ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]' : 'bg-red-500'}`}></div>
+                  <div>
+                    <p className="font-mono text-lg truncate w-40 md:w-auto">{v.nodeID}</p>
+                    <p className="text-xs text-[var(--muted)] flex items-center gap-1 mt-1">
+                      <MapPin size={12} /> {v.connected !== false ? 'Active Node' : 'Disconnected'} • Weight: {(Number(v.weight) / 1e9).toFixed(2)} AVAX
+                    </p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className={`text-sm tracking-wider ${v.connected !== false ? 'text-emerald-400' : 'text-red-400'}`}>{v.connected !== false ? 'Active' : 'Offline'}</p>
+                  <p className="text-xs text-[var(--muted)] font-mono mt-1">Uptime: {v.uptime ? (Number(v.uptime) * 100).toFixed(2) + '%' : '---'}</p>
                 </div>
               </div>
-              <div className="text-right">
-                <p className="text-sm tracking-wider text-emerald-400">{v.status}</p>
-                <p className="text-xs text-[var(--muted)] font-mono mt-1">Uptime: {v.uptime}</p>
-              </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
     </div>
