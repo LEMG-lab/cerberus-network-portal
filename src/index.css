@@ -1,38 +1,167 @@
-@import "tailwindcss";
+/* ── Reset & Base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg: #F6F6F7;
-  --card: #ffffff;
-  --text: #0B0B0C;
-  --muted: #6B6B6E;
-  --accent: #E11D48;
-  --border: #E5E5E7;
+  --bg: #ffffff;
+  --bg-card: #f6f7f9;
+  --text: #111111;
+  --text-muted: #666666;
+  --accent: #d42020;
+  --border: #e2e2e2;
+  --radius: 12px;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
+
+html, body, #root { height: 100%; }
 
 body {
+  font-family: var(--font);
   background: var(--bg);
   color: var(--text);
-  font-family: 'Inter', system-ui, sans-serif;
-  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-weight: 800;
+/* ── Layout ── */
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 32px;
+  border-bottom: 1px solid var(--border);
+}
+
+header .logo {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+header .logo span { color: var(--accent); }
+
+nav { display: flex; gap: 8px; }
+
+nav a {
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-muted);
+  padding: 6px 14px;
+  border-radius: 8px;
+  transition: background 0.15s, color 0.15s;
+}
+
+nav a:hover { background: var(--bg-card); color: var(--text); }
+nav a.active { background: var(--accent); color: #fff; }
+
+main {
+  flex: 1;
+  padding: 40px 32px;
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 12px;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border);
+}
+
+/* ── Card ── */
 .card {
-  background: var(--card);
+  background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 16px;
 }
 
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
+.card h2 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
 }
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
+
+.card .value {
+  font-size: 32px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: var(--border);
-  border-radius: 10px;
+
+.card .value.accent { color: var(--accent); }
+
+/* ── Status Grid ── */
+.status-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 560px) {
+  .status-grid { grid-template-columns: 1fr; }
+  header { flex-direction: column; gap: 12px; }
+  main { padding: 24px 16px; }
+}
+
+/* ── Link Page ── */
+.link-card {
+  text-align: center;
+  padding: 48px 28px;
+}
+
+.link-card p {
+  font-size: 16px;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+.link-card .btn {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 12px 32px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+
+.link-card .btn:hover { opacity: 0.85; }
+
+/* ── Pulse ── */
+.pulse {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #22c55e;
+  margin-right: 8px;
+  vertical-align: middle;
+  animation: pulse-ring 1.5s ease-in-out infinite;
+}
+
+.pulse.error { background: var(--accent); }
+
+@keyframes pulse-ring {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ── Page Title ── */
+.page-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 24px;
 }
