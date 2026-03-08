@@ -141,7 +141,7 @@ export default function Status() {
           <div className="mt-6 pt-4 border-t border-[var(--border)]">
              <p className="text-xs text-[var(--muted)] mb-2 uppercase tracking-widest">Recent Blocks</p>
              <div className="space-y-2">
-               {recentBlocks.slice(0, 3).map(b => (
+               {recentBlocks.slice(0, 10).map(b => (
                  <div key={b.number} className="flex justify-between text-xs font-mono">
                    <span className="text-gray-400">#{b.number}</span>
                    <span className="text-[var(--accent)]">{b.txCount} TXs</span>
