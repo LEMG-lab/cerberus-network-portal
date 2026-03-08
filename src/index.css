@@ -2,22 +2,28 @@
 
 :root {
   --bg: #F6F6F7;
-  --card: rgba(255, 255, 255, 0.85);
-  --text-primary: #0B0B0C;
-  --text-secondary: #6B6B6E;
+  --card: #ffffff;
+  --text: #0B0B0C;
+  --muted: #6B6B6E;
   --accent: #E11D48;
   --border: #E5E5E7;
 }
 
 body {
   background: var(--bg);
-  color: var(--text-primary);
+  color: var(--text);
   font-family: 'Inter', system-ui, sans-serif;
   font-weight: 400;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-weight: 800;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
 }
 
 .custom-scrollbar::-webkit-scrollbar {

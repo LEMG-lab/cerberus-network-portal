@@ -17,12 +17,12 @@ function Navigation() {
   ];
 
   return (
-    <nav className="flex flex-wrap items-center gap-6 mt-6 md:mt-0">
+    <nav className="flex items-center gap-6 mt-6 md:mt-0">
       {links.map(l => (
         <Link 
           key={l.path} 
           to={l.path}
-          className={`text-sm tracking-wider uppercase transition-colors ${location.pathname.startsWith(l.path) ? 'text-[var(--accent)] border-b border-[var(--accent)] pb-1' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
+          className={`text-sm tracking-wider uppercase transition-colors ${location.pathname.startsWith(l.path) ? 'text-[var(--accent)] border-b border-[var(--accent)] pb-1' : 'text-[var(--muted)] hover:text-[var(--text)]'}`}
         >
           {l.label}
         </Link>
@@ -40,11 +40,11 @@ export default function App() {
           <div className="max-w-7xl mx-auto px-6 py-4 flex flex-col md:flex-row items-center justify-between">
             <div>
               <Link to="/status" className="group">
-                <h1 className="text-xl font-extrabold tracking-[0.2em] text-[var(--text-primary)] flex items-center gap-2">
+                <h1 className="text-xl font-extrabold tracking-[0.2em] text-[var(--text)] flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-[var(--accent)] shadow-[0_0_10px_var(--accent)] group-hover:scale-150 transition-transform"></span>
                   CERBERUS NETWORK
                 </h1>
-                <p className="text-[10px] text-[var(--text-secondary)] tracking-widest uppercase mt-1">Compliance Computation Infrastructure</p>
+                <p className="text-[10px] text-[var(--muted)] tracking-widest uppercase mt-1">Compliance Computation Infrastructure</p>
               </Link>
             </div>
             <Navigation />
@@ -62,13 +62,13 @@ export default function App() {
           </Routes>
         </main>
 
-        <footer className="border-t border-[var(--border)] bg-[var(--bg)]/80 backdrop-blur-md mt-auto">
-          <div className="max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row items-center justify-between text-[11px] text-[var(--text-secondary)] tracking-widest uppercase">
+        <footer className="border-t border-[var(--border)] bg-[var(--bg)] mt-auto">
+          <div className="max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row items-center justify-between text-xs text-[var(--muted)] tracking-widest uppercase">
             <div>
               <p>Cerberus Ledger • Avalanche L1 Subnet</p>
             </div>
             <div className="mt-4 md:mt-0 flex gap-6">
-              <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Mainnet</span>
+              <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Mainnet</span>
               <span>Chain ID: 990305</span>
             </div>
           </div>

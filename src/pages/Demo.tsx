@@ -31,7 +31,7 @@ export default function Demo() {
     <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-500">
       <div className="text-center space-y-4 mb-16">
         <h1 className="text-3xl font-extrabold tracking-wider">Operation Simulator</h1>
-        <p className="text-[var(--text-secondary)] max-w-xl mx-auto">
+        <p className="text-[var(--muted)] max-w-xl mx-auto">
           Execute a simulated transaction through the Cerberus compliance pipeline, demonstrating real-time evidence generation and blockchain notarization.
         </p>
         <button 
@@ -53,16 +53,16 @@ export default function Demo() {
             
             return (
               <div key={i} className={`flex items-start gap-6 transition-all duration-700 ${isActive ? 'opacity-100' : 'opacity-30'}`}>
-                <div className={`relative z-10 w-12 h-12 rounded-full flex items-center justify-center shrink-0 border-2 transition-colors duration-500 ${isActive ? 'bg-[var(--card)] backdrop-blur-[8px] border-[var(--accent)] text-[var(--accent)] shadow-[0_0_15px_rgba(0,234,254,0.3)]' : 'bg-gray-900 border-[var(--border)] text-gray-600'}`}>
+                <div className={`relative z-10 w-12 h-12 rounded-full flex items-center justify-center shrink-0 border-2 transition-colors duration-500 ${isActive ? 'bg-[var(--card)] border-[var(--accent)] text-[var(--accent)] shadow-[0_0_15px_rgba(0,234,254,0.3)]' : 'bg-gray-900 border-[var(--border)] text-gray-600'}`}>
                   {isCurrent ? <div className="animate-pulse">{s.icon}</div> : s.icon}
                 </div>
                 
-                <div className={`bg-[var(--card)] backdrop-blur-[8px] border transition-colors duration-500 rounded-[14px] p-6 flex-1 ${isCurrent ? 'border-[var(--accent)]/50' : 'border-[var(--border)]'}`}>
+                <div className={`bg-[var(--card)] border transition-colors duration-500 rounded-[14px] p-6 flex-1 ${isCurrent ? 'border-[var(--accent)]/50' : 'border-[var(--border)]'}`}>
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="text-xl font-medium tracking-wide">{s.title}</h3>
                     {isActive && !isCurrent && <CheckCircle2 className="text-emerald-400" size={20} />}
                   </div>
-                  <p className="text-[var(--text-secondary)] text-sm">{s.desc}</p>
+                  <p className="text-[var(--muted)] text-sm">{s.desc}</p>
                   
                   {isCurrent && (
                     <div className="mt-4 h-1 w-full bg-gray-800 rounded overflow-hidden">

@@ -60,35 +60,35 @@ export default function Validators() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-[var(--card)] backdrop-blur-[8px] border border-[var(--border)] rounded-[14px] p-6 min-h-[400px] flex items-center justify-center relative overflow-hidden">
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-[14px] p-6 min-h-[400px] flex items-center justify-center relative overflow-hidden">
           {/* Simulated Map Visual */}
           <div className="absolute inset-0 opacity-20 bg-[radial-gradient(ellipse_at_center,_#E11D48_0%,_transparent_70%)]"></div>
           <div className="z-10 text-center space-y-4">
             <Globe size={120} className="mx-auto text-gray-700 animate-[spin_60s_linear_infinite]" />
             <p className="text-sm tracking-widest text-[var(--accent)]">GLOBAL FORCE DEPLOYMENT</p>
-            <p className="text-xs font-mono text-[var(--text-secondary)] bg-[var(--card)] backdrop-blur-[8px] py-1 px-3 rounded-full border border-[var(--border)] inline-block mt-4">{networkLatency}</p>
+            <p className="text-xs font-mono text-[var(--muted)] bg-[var(--card)] py-1 px-3 rounded-full border border-[var(--border)] inline-block mt-4">{networkLatency}</p>
           </div>
         </div>
 
         <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
           <h2 className="text-xl font-extrabold mb-4 sticky top-0 bg-[var(--bg)] z-10 py-2">Node Registry</h2>
           {validators.length === 0 ? (
-             <div className="text-[var(--text-secondary)] text-sm animate-pulse p-4">Syncing with Platform Chain...</div>
+             <div className="text-[var(--muted)] text-sm animate-pulse p-4">Syncing with Platform Chain...</div>
           ) : (
             validators.map((v) => (
-              <div key={v.nodeID} className="bg-[var(--card)] backdrop-blur-[8px] border border-[var(--border)] p-4 rounded-[14px] flex items-center justify-between hover:border-[var(--border)] transition-colors">
+              <div key={v.nodeID} className="bg-[var(--card)] border border-[var(--border)] p-4 rounded-[14px] flex items-center justify-between hover:border-[var(--border)] transition-colors">
                 <div className="flex items-center gap-4">
                   <div className={`w-2 h-2 rounded-full ${v.connected !== false ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]' : 'bg-red-500'}`}></div>
                   <div>
                     <p className="font-mono text-lg truncate w-40 md:w-auto">{v.nodeID}</p>
-                    <p className="text-xs text-[var(--text-secondary)] flex items-center gap-1 mt-1">
+                    <p className="text-xs text-[var(--muted)] flex items-center gap-1 mt-1">
                       <MapPin size={12} /> {v.connected !== false ? 'Active Node' : 'Disconnected'} • Weight: {(Number(v.weight) / 1e9).toFixed(2)} AVAX
                     </p>
                   </div>
                 </div>
                 <div className="text-right">
                   <p className={`text-sm tracking-wider ${v.connected !== false ? 'text-emerald-400' : 'text-red-400'}`}>{v.connected !== false ? 'Active' : 'Offline'}</p>
-                  <p className="text-xs text-[var(--text-secondary)] font-mono mt-1">Uptime: {v.uptime ? (Number(v.uptime) * 100).toFixed(2) + '%' : '---'}</p>
+                  <p className="text-xs text-[var(--muted)] font-mono mt-1">Uptime: {v.uptime ? (Number(v.uptime) * 100).toFixed(2) + '%' : '---'}</p>
                 </div>
               </div>
             ))
