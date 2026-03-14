@@ -32,7 +32,10 @@ export function useRpcMetrics() {
   const blocksBufferRef = useRef<BlockEntry[]>([])
   const lastBlockRef = useRef<number>(0)
 
+  const cancelledRef = useRef(false)
+
   const fetchData = useCallback(async () => {
+    if (cancelledRef.current) return
     try {
       if (!providerRef.current) {
         providerRef.current = new JsonRpcProvider(CERBERUS_RPC)
@@ -79,27 +82,35 @@ export function useRpcMetrics() {
         if (avg > 500) health = 'degraded'
       }
 
-      setMetrics({
-        blockNumber,
-        txCount,
-        latencyMs,
-        blockTimeMs,
-        lastUpdated: new Date().toLocaleTimeString(),
-        health,
-        recentBlocks: [...blocksBufferRef.current],
-        latencyHistory: [...latencyBufferRef.current],
-      })
-      setError(false)
+      if (!cancelledRef.current) {
+        setMetrics({
+          blockNumber,
+          txCount,
+          latencyMs,
+          blockTimeMs,
+          lastUpdated: new Date().toLocaleTimeString(),
+          health,
+          recentBlocks: [...blocksBufferRef.current],
+          latencyHistory: [...latencyBufferRef.current],
+        })
+        setError(false)
+      }
     } catch {
-      setError(true)
-      setMetrics(null)
+      if (!cancelledRef.current) {
+        setError(true)
+        setMetrics(null)
+      }
     }
   }, [])
 
   useEffect(() => {
+    cancelledRef.current = false
     fetchData()
     const id = setInterval(fetchData, POLL_INTERVAL)
-    return () => clearInterval(id)
+    return () => {
+      cancelledRef.current = true
+      clearInterval(id)
+    }
   }, [fetchData])
 
   return { metrics, error }
