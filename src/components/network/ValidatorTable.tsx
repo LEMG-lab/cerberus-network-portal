@@ -27,6 +27,7 @@ async function rpcCall(method: string, params: unknown[] = []): Promise<unknown>
 export default function ValidatorTable() {
   const [rows, setRows] = useState<ValidatorRow[]>([])
   const [error, setError] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   const fetchData = useCallback(async () => {
     try {
@@ -49,6 +50,7 @@ export default function ValidatorTable() {
         }))
       )
       setError(false)
+      setLoading(false)
     } catch {
       setRows(
         validators.map((v) => ({
@@ -61,6 +63,7 @@ export default function ValidatorTable() {
         }))
       )
       setError(true)
+      setLoading(false)
     }
   }, [])
 
@@ -69,6 +72,10 @@ export default function ValidatorTable() {
     const id = setInterval(fetchData, 10_000)
     return () => clearInterval(id)
   }, [fetchData])
+
+  if (loading && rows.length === 0 && !error) {
+    return <div className="card"><p className="loading-text">Loading…</p></div>
+  }
 
   return (
     <>
