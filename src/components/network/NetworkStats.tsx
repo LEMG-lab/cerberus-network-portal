@@ -1,7 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { CERBERUS_RPC } from '../../config/network'
-
-const RPC_URL = CERBERUS_RPC
+import { rpcCall } from '../../config/network'
 
 interface Stats {
   blockNumber: string
@@ -10,17 +8,6 @@ interface Stats {
   syncing: string
   gasPrice: string
   blockTime: string
-}
-
-async function rpcCall(method: string, params: unknown[] = []): Promise<unknown> {
-  const res = await fetch(RPC_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }),
-  })
-  const json = await res.json()
-  if (json.error) throw new Error(json.error.message)
-  return json.result
 }
 
 export default function NetworkStats() {
