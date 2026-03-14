@@ -1,54 +1,9 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
-import { JsonRpcProvider } from 'ethers'
 import { Link } from 'react-router-dom'
+import { useRpcMetrics } from '../hooks/useRpcMetrics'
 import { CERBERUS_RPC } from '../config/network'
 
-const RPC_URL = CERBERUS_RPC
-
-interface LiveData {
-  blockNumber: number
-  txCount: number
-  latencyMs: number
-  lastUpdated: string
-}
-
 export default function Home() {
-  const [data, setData] = useState<LiveData | null>(null)
-  const [rpcDown, setRpcDown] = useState(false)
-  const providerRef = useRef<JsonRpcProvider | null>(null)
-
-  const fetchData = useCallback(async () => {
-    try {
-      if (!providerRef.current) {
-        providerRef.current = new JsonRpcProvider(RPC_URL)
-      }
-      const provider = providerRef.current
-
-      const t0 = performance.now()
-      const blockNumber = await provider.getBlockNumber()
-      const latencyMs = Math.round(performance.now() - t0)
-
-      const block = await provider.getBlock(blockNumber)
-      const txCount = block?.transactions?.length ?? 0
-
-      setData({
-        blockNumber,
-        txCount,
-        latencyMs,
-        lastUpdated: new Date().toLocaleTimeString(),
-      })
-      setRpcDown(false)
-    } catch {
-      setRpcDown(true)
-      setData(null)
-    }
-  }, [])
-
-  useEffect(() => {
-    fetchData()
-    const id = setInterval(fetchData, 5000)
-    return () => clearInterval(id)
-  }, [fetchData])
+  const { metrics, error } = useRpcMetrics()
 
   return (
     <div className="home">
@@ -75,42 +30,54 @@ export default function Home() {
       <section className="section">
         <h2 className="section-title">Live Status</h2>
 
-        {rpcDown && (
+        {error && (
           <div className="card card-error">
             <p className="rpc-unavailable">RPC unavailable</p>
           </div>
         )}
 
-        {!rpcDown && !data && (
+        {!error && !metrics && (
           <div className="card">
             <p className="loading-text">Connecting to RPC…</p>
           </div>
         )}
 
-        {!rpcDown && data && (
-          <div className="status-grid">
-            <div className="card">
-              <h3>Latest Block</h3>
-              <div className="metric">
-                <span className="pulse" />
-                {data.blockNumber.toLocaleString()}
+        {!error && metrics && (
+          <>
+            <div className="status-header home-status-header">
+              <span className={`health-dot ${metrics.health === 'operational' ? 'health-dot-ok' : 'health-dot-warn'}`} />
+              <span className="health-label-inline">
+                {metrics.health === 'operational' ? 'Network Operational' : 'Degraded'}
+              </span>
+            </div>
+            <div className="status-grid">
+              <div className="card">
+                <h3>Latest Block</h3>
+                <div className="metric">
+                  <span className="pulse" />
+                  {metrics.blockNumber.toLocaleString()}
+                </div>
+              </div>
+              <div className="card">
+                <h3>TX in Block</h3>
+                <div className="metric">{metrics.txCount}</div>
+              </div>
+              <div className="card">
+                <h3>RPC Latency</h3>
+                <div className={`metric ${metrics.latencyMs > 500 ? 'accent' : ''}`}>
+                  {metrics.latencyMs} ms
+                </div>
+              </div>
+              <div className="card">
+                <h3>Block Time</h3>
+                <div className="metric">
+                  {metrics.blockTimeMs > 0
+                    ? `${(metrics.blockTimeMs / 1000).toFixed(1)} s`
+                    : '—'}
+                </div>
               </div>
             </div>
-            <div className="card">
-              <h3>TX in Block</h3>
-              <div className="metric">{data.txCount}</div>
-            </div>
-            <div className="card">
-              <h3>RPC Latency</h3>
-              <div className={`metric ${data.latencyMs > 500 ? 'accent' : ''}`}>
-                {data.latencyMs} ms
-              </div>
-            </div>
-            <div className="card">
-              <h3>Last Updated</h3>
-              <div className="metric">{data.lastUpdated}</div>
-            </div>
-          </div>
+          </>
         )}
       </section>
 
@@ -146,7 +113,7 @@ export default function Home() {
               <tr><td>Chain ID</td><td>990305</td></tr>
               <tr><td>Subnet ID</td><td className="mono">2RSUQMUEzBv6hduKiRt4DqUmAmY6A2uFJETfoABbznZE2agm9L</td></tr>
               <tr><td>Blockchain ID</td><td className="mono">J1xzDCPGkgC3inCkYRMe3cxcLMvYE6K4UsQxfqdm8PcGe1EMG</td></tr>
-              <tr><td>RPC Endpoint</td><td className="mono">{RPC_URL}</td></tr>
+              <tr><td>RPC Endpoint</td><td className="mono">{CERBERUS_RPC}</td></tr>
             </tbody>
           </table>
         </div>
